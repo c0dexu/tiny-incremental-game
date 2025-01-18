@@ -1,6 +1,10 @@
 "use client";
 
-export default function EmptySlot() {
+interface EmptySlotProps {
+  amount: number;
+}
+
+export default function EmptySlot(props: EmptySlotProps) {
   return (
     <button
       style={{
@@ -9,12 +13,12 @@ export default function EmptySlot() {
         width: "64px",
         height: "64px",
         fontSize: "11px",
-        display: "flex",
         alignItems: "center",
         margin: "0",
       }}
     >
-      <div>Empty Slot (5 coins)</div>
+      <div>Empty slot</div>
+      <div>( {props.amount} coins )</div>
     </button>
   );
 }

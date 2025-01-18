@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 interface CoinsProps {
-  amount: number;
+  coins: number;
   rate: number;
 }
 
@@ -28,7 +28,7 @@ export default function Coins(props: CoinsProps) {
             marginLeft: "5px",
           }}
         >
-          {props.amount}
+          {props.coins}
         </span>
       </div>
       <div

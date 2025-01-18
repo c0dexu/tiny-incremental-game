@@ -29,7 +29,7 @@ export default function Game() {
           gridTemplateColumns: "128px 50%",
         }}
       >
-        <Coins amount={coins} rate={rate}></Coins>
+        <Coins coins={coins} rate={rate}></Coins>
       </div>
 
       <div
@@ -39,11 +39,7 @@ export default function Game() {
           gap: "10px",
         }}
       >
-        <EmptySlot></EmptySlot>
-        <EmptySlot></EmptySlot>
-        <EmptySlot></EmptySlot>
-        <EmptySlot></EmptySlot>
-        <EmptySlot></EmptySlot>
+        <EmptySlot amount={5}></EmptySlot>
       </div>
     </div>
   );
