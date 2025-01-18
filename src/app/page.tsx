@@ -3,16 +3,27 @@
 import Coins from "./components/coins.component";
 import { useEffect, useRef, useState } from "react";
 import EmptySlot from "./components/empty_slot.component";
+import DialogBox from "./components/dialog-box.component";
 
 export default function Game() {
   const [coins, setCoins] = useState(0);
+  const [accumulatedCoins, setAccumulatedCoins] = useState(0);
   const [rate, setRate] = useState(1);
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+  const coinsRef = useRef(0);
+  const [showDialogue, setShowDialogue] = useState(false);
 
   useEffect(() => {
-    setInterval(() => {
-      setCoins((c) => c + rate);
-    }, 1000);
+    setTimer(
+      setInterval(() => {
+        setCoins((c) => c + rate);
+      }, 1000)
+    );
   }, []);
+
+  useEffect(() => {
+    coinsRef.current = coins;
+  }, [coins]);
 
   return (
     <div
@@ -26,10 +37,19 @@ export default function Game() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "128px 50%",
+          gridTemplateColumns: "256px 50%",
         }}
       >
-        <Coins coins={coins} rate={rate}></Coins>
+        <Coins
+          onCoinsCollect={() => {
+            console.log(coinsRef.current);
+            setAccumulatedCoins(accumulatedCoins + coinsRef.current);
+            setCoins(0);
+          }}
+          accumulatedCoins={accumulatedCoins}
+          coins={coins}
+          rate={rate}
+        ></Coins>
       </div>
 
       <div
@@ -41,6 +61,7 @@ export default function Game() {
       >
         <EmptySlot amount={5}></EmptySlot>
       </div>
+      <DialogBox textToDisplay="Hello world! This is a text example to show any potential dialog message."></DialogBox>
     </div>
   );
 }
