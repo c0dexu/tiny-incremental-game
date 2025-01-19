@@ -2,8 +2,9 @@
 
 import Coins from "./components/coins.component";
 import { useEffect, useRef, useState } from "react";
-import { beginningDialog, Dialog } from "./dialog-texts";
 import Generator from "./components/generator.component";
+import { v4 as uuidv4 } from "uuid";
+import { IEntity } from "./entity.interface";
 
 export default function Game() {
   const [marbles, setMarbles] = useState(0);
@@ -11,6 +12,25 @@ export default function Game() {
   const [rate, setRate] = useState(0);
   const timer = useRef<NodeJS.Timeout | null>(null);
   const coinsRef = useRef(0);
+  const [entities, setEntities] = useState<IEntity[]>([]);
+  const [frameIndex, setFrameIndex] = useState(0);
+
+  // initial effect to add the zero generator
+  useEffect(() => {
+    setInterval(() => {
+      setFrameIndex((f) => (f + 1) % 2);
+    }, 500);
+
+    setEntities([
+      {
+        type: "GENERATOR",
+        price: 0,
+        power: 1,
+        claimed: false,
+        frameIndex: 0,
+      },
+    ]);
+  }, []);
 
   useEffect(() => {
     if (timer.current) {
@@ -25,6 +45,28 @@ export default function Game() {
   useEffect(() => {
     coinsRef.current = marbles;
   }, [marbles]);
+
+  const entitiesToRender = entities.map((e, idx) => {
+    switch (e.type) {
+      case "GENERATOR":
+        return (
+          <Generator
+            key={uuidv4()}
+            frameIndex={frameIndex}
+            coins={marbles}
+            claimed={e.claimed}
+            price={e.price}
+            onClaim={(power, price) => {
+              setRate((r) => r + power);
+              setMarbles((m) => m - price);
+              const tempList = [...entities];
+              tempList[idx].claimed = true;
+              setEntities([...tempList]);
+            }}
+          ></Generator>
+        );
+    }
+  });
 
   return (
     <div
@@ -43,7 +85,6 @@ export default function Game() {
       >
         <Coins
           onMarblesCollect={() => {
-            console.log(coinsRef.current);
             setAccumulatedCoins(accumulatedCoins + coinsRef.current);
             setMarbles(0);
           }}
@@ -61,12 +102,7 @@ export default function Game() {
           gap: "30px",
         }}
       >
-        <Generator
-          coins={marbles}
-          onClaim={(power) => {
-            setRate((r) => r + power);
-          }}
-        ></Generator>
+        {entitiesToRender}
       </div>
     </div>
   );
