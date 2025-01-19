@@ -6,30 +6,25 @@ import { beginningDialog, Dialog } from "./dialog-texts";
 import Generator from "./components/generator.component";
 
 export default function Game() {
-  const [coins, setCoins] = useState(0);
+  const [marbles, setMarbles] = useState(0);
   const [accumulatedCoins, setAccumulatedCoins] = useState(0);
   const [rate, setRate] = useState(0);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timer = useRef<NodeJS.Timeout | null>(null);
   const coinsRef = useRef(0);
-  const [showDialogue, setShowDialogue] = useState(false);
-  const [dialogueList, setDialogueList] = useState<Dialog[]>([]);
 
   useEffect(() => {
-    console.log(timerRef);
-    if (!timerRef.current) {
-      timerRef.current = setInterval(() => {
-        setCoins((c) => c + rate);
-      }, 1000);
+    if (timer.current) {
+      clearInterval(timer.current);
     }
+
+    timer.current = setInterval(() => {
+      setMarbles((c) => c + rate);
+    }, 1000);
   }, [rate]);
 
   useEffect(() => {
-    coinsRef.current = coins;
-  }, [coins]);
-
-  useEffect(() => {
-    setDialogueList(beginningDialog);
-  }, []);
+    coinsRef.current = marbles;
+  }, [marbles]);
 
   return (
     <div
@@ -47,13 +42,13 @@ export default function Game() {
         }}
       >
         <Coins
-          onCoinsCollect={() => {
+          onMarblesCollect={() => {
             console.log(coinsRef.current);
             setAccumulatedCoins(accumulatedCoins + coinsRef.current);
-            setCoins(0);
+            setMarbles(0);
           }}
-          accumulatedCoins={accumulatedCoins}
-          coins={coins}
+          accumulatedMarbles={accumulatedCoins}
+          marbles={marbles}
           rate={rate}
         ></Coins>
       </div>
@@ -67,6 +62,7 @@ export default function Game() {
         }}
       >
         <Generator
+          coins={marbles}
           onClaim={(power) => {
             setRate((r) => r + power);
           }}

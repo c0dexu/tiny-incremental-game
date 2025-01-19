@@ -2,38 +2,52 @@
 
 import { useEffect, useState } from "react";
 
-interface CoinsProps {
-  coins: number;
+interface MarblesProps {
+  marbles: number;
   rate: number;
-  accumulatedCoins: number;
-  onCoinsCollect: () => void;
+  accumulatedMarbles: number;
+  onMarblesCollect: () => void;
 }
 
-export default function Coins(props: CoinsProps) {
+export default function Marbles(props: MarblesProps) {
   return (
     <div
       style={{
         border: "1px solid #5b755f",
         borderRadius: "10%",
         padding: "0.25rem 0.25rem 0.25rem 0.25rem",
-        backgroundColor: "#5b755f",
+        backgroundColor: "#486349",
         fontSize: "14px",
       }}
     >
-      <div>Coins collected: {props.accumulatedCoins}</div>
       <div
         style={{
           display: "flex",
         }}
       >
-        <div>Coins generated:</div>
+        <div>Marbles collected: {props.accumulatedMarbles}</div>
+        <img src="/marble.png"></img>
+      </div>
+      <div
+        style={{
+          display: "flex",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+          }}
+        >
+          <div>Marbles generated:</div>
+        </div>
         <span
           style={{
             marginLeft: "5px",
           }}
         >
-          {props.coins}
+          {props.marbles}
         </span>
+        <img src="/marble.png"></img>
       </div>
       <div
         style={{
@@ -64,9 +78,9 @@ export default function Coins(props: CoinsProps) {
             borderRadius: "15%",
             padding: "5px 5px 5px 5px",
           }}
-          onClick={props.onCoinsCollect}
+          onClick={props.onMarblesCollect}
         >
-          Collect coins
+          Collect marbles
         </button>
       </div>
     </div>
