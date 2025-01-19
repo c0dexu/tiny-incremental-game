@@ -5,6 +5,16 @@ import { useEffect, useRef, useState } from "react";
 import Generator from "./components/generator.component";
 import { v4 as uuidv4 } from "uuid";
 import { IEntity } from "./entity.interface";
+import Cat from "./components/cat.component";
+
+function getRule(entities: IEntity[], marbles: number): string {
+  if (entities.length === 1 && entities[0].type === "GENERATOR") {
+    if (entities[0].price === 0) {
+      return "first_time_play";
+    }
+  }
+  return "nothing";
+}
 
 export default function Game() {
   const [marbles, setMarbles] = useState(0);
@@ -46,24 +56,60 @@ export default function Game() {
     coinsRef.current = marbles;
   }, [marbles]);
 
+  useEffect(() => {
+    console.log(entities);
+  }, [entities]);
+
   const entitiesToRender = entities.map((e, idx) => {
     switch (e.type) {
       case "GENERATOR":
         return (
           <Generator
-            key={uuidv4()}
+            key={idx}
             frameIndex={frameIndex}
-            coins={marbles}
+            coins={accumulatedCoins}
             claimed={e.claimed}
             price={e.price}
             onClaim={(power, price) => {
               setRate((r) => r + power);
-              setMarbles((m) => m - price);
+              setAccumulatedCoins((m) => Math.max(0, m - price));
+              setMarbles(0);
               const tempList = [...entities];
               tempList[idx].claimed = true;
               setEntities([...tempList]);
+              const rule = getRule(entities, marbles);
+              switch (rule) {
+                case "first_time_play":
+                  const xyz = [...entities];
+                  xyz.push({
+                    type: "CAT",
+                    price: 15,
+                    claimed: false,
+                    power: 0,
+                    frameIndex: 0,
+                  });
+                  setEntities([...xyz]);
+                  break;
+              }
             }}
           ></Generator>
+        );
+      case "CAT":
+        return (
+          <Cat
+            key={idx}
+            frameIndex={frameIndex}
+            coins={accumulatedCoins}
+            claimed={e.claimed}
+            price={e.price}
+            onClaim={(power, price) => {
+              console.log("here");
+              const tempList = [...entities];
+              tempList[idx].claimed = true;
+              setEntities([...tempList]);
+              setAccumulatedCoins((m) => Math.max(0, m - e.price));
+            }}
+          ></Cat>
         );
     }
   });

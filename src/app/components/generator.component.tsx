@@ -1,17 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { EntityProps } from "../entity.interface";
 
-interface GeneratorProps {
-  key: string;
-  frameIndex: number;
-  coins: number;
-  claimed: boolean;
-  price: number;
-  onClaim: (power: number, price: number) => void;
-}
-
-export default function Generator(props: GeneratorProps) {
+export default function Generator(props: EntityProps) {
   const power = useRef(1);
 
   return (
@@ -26,7 +18,10 @@ export default function Generator(props: GeneratorProps) {
           justifyContent: "center",
         }}
       >
-        <button
+        <div
+          style={{
+            cursor: !props.claimed ? "pointer" : "auto",
+          }}
           onClick={() => {
             if (!props.claimed) {
               if (props.coins >= props.price) {
@@ -45,7 +40,7 @@ export default function Generator(props: GeneratorProps) {
           {props.claimed && props.frameIndex === 1 && (
             <img src="/generator_2.png" width="64px" height="64px"></img>
           )}
-        </button>
+        </div>
       </div>
       <div
         style={{
@@ -54,7 +49,7 @@ export default function Generator(props: GeneratorProps) {
       >
         <div>Generator</div>
         <div>Power: {power.current}</div>
-        {!props.claimed && <div>[{props.price} coins]</div>}
+        {!props.claimed && <div>[{props.price} marbles]</div>}
       </div>
     </div>
   );
