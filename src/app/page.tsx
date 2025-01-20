@@ -143,7 +143,15 @@ export default function Game() {
           >
             <Dialog
               title="Insufficient marbles"
-              description={`You need ${entityRef.current?.price} marbles to buy ${entityRef.current?.type}`}
+              description={
+                entityRef.current
+                  ? `You can buy a ${
+                      entityRef.current?.type
+                    } only if you have at least ${
+                      entityRef.current.price - accumulatedCoins
+                    } marbles`
+                  : ""
+              }
               onSubmit={() => {
                 setInsufficientFundsDialog(false);
               }}
