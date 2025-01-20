@@ -1,11 +1,6 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
 import { EntityProps } from "../entity.interface";
 
 export default function Generator(props: EntityProps) {
-  const power = useRef(1);
-
   return (
     <div
       style={{
@@ -25,7 +20,7 @@ export default function Generator(props: EntityProps) {
           onClick={() => {
             if (!props.claimed) {
               if (props.coins >= props.price) {
-                props.onClaim(power.current, props.price);
+                props.onClaim(props.power ?? 0, props.price);
               }
             }
           }}
@@ -48,7 +43,7 @@ export default function Generator(props: EntityProps) {
         }}
       >
         <div>Generator</div>
-        <div>Power: {power.current}</div>
+        <div>Power: {props.power ?? 0}</div>
         {!props.claimed && <div>[{props.price} marbles]</div>}
       </div>
     </div>

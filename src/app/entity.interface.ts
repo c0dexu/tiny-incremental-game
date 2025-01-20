@@ -1,5 +1,7 @@
+import { EntityType } from "./enums/entity-types.enum";
+
 export interface IEntity {
-  type: string;
+  type: EntityType;
   price: number;
   power?: number;
   claimed: boolean;
@@ -12,5 +14,6 @@ export interface EntityProps {
   coins: number;
   claimed: boolean;
   price: number;
+  power?: number;
   onClaim: (power: number, price: number) => void;
 }

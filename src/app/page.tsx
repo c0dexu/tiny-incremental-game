@@ -1,19 +1,42 @@
 "use client";
 
 import Coins from "./components/coins.component";
-import { useEffect, useRef, useState } from "react";
+import { SetStateAction, useEffect, useRef, useState } from "react";
 import Generator from "./components/generator.component";
 import { v4 as uuidv4 } from "uuid";
 import { IEntity } from "./entity.interface";
 import Cat from "./components/cat.component";
+import { Rules } from "./enums/rules.enum";
+import { EntityType } from "./enums/entity-types.enum";
 
-function getRule(entities: IEntity[], marbles: number): string {
+function getRule(entities: IEntity[], marbles: number): Rules {
   if (entities.length === 1 && entities[0].type === "GENERATOR") {
     if (entities[0].price === 0) {
-      return "first_time_play";
+      return Rules.first_time_play;
     }
   }
-  return "nothing";
+  return Rules.nothing;
+}
+
+function checkRule(
+  entities: IEntity[],
+  marbles: number,
+  setEntities: (value: SetStateAction<IEntity[]>) => void
+) {
+  const rule = getRule(entities, marbles);
+  switch (rule) {
+    case Rules.first_time_play:
+      const xyz = [...entities];
+      xyz.push({
+        type: EntityType.GENERATOR,
+        price: 15,
+        claimed: false,
+        power: 0,
+        frameIndex: 0,
+      });
+      setEntities([...xyz]);
+      break;
+  }
 }
 
 export default function Game() {
@@ -33,7 +56,7 @@ export default function Game() {
 
     setEntities([
       {
-        type: "GENERATOR",
+        type: EntityType.GENERATOR,
         price: 0,
         power: 1,
         claimed: false,
@@ -70,6 +93,7 @@ export default function Game() {
             coins={accumulatedCoins}
             claimed={e.claimed}
             price={e.price}
+            power={e.power}
             onClaim={(power, price) => {
               setRate((r) => r + power);
               setAccumulatedCoins((m) => Math.max(0, m - price));
@@ -77,20 +101,7 @@ export default function Game() {
               const tempList = [...entities];
               tempList[idx].claimed = true;
               setEntities([...tempList]);
-              const rule = getRule(entities, marbles);
-              switch (rule) {
-                case "first_time_play":
-                  const xyz = [...entities];
-                  xyz.push({
-                    type: "CAT",
-                    price: 15,
-                    claimed: false,
-                    power: 0,
-                    frameIndex: 0,
-                  });
-                  setEntities([...xyz]);
-                  break;
-              }
+              checkRule(entities, marbles, setEntities);
             }}
           ></Generator>
         );
