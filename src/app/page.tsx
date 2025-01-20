@@ -6,7 +6,8 @@ import { v4 as uuidv4 } from "uuid";
 import { IEntity } from "./entity.interface";
 import { EntityType } from "./enums/entity-types.enum";
 import Entity from "./components/entity.component";
-import { entityFrames } from "./entities.list";
+import { entityFrames } from "./entity_frames.list";
+import Dialog from "./components/dialog.component";
 
 function populatePlayground(
   entitiesToPopulate: IEntity[],
@@ -36,7 +37,18 @@ function updatePlayground(
       setEntities
     );
   } else if (entities.length > 1) {
-    // stuff
+    populatePlayground(
+      [
+        {
+          type: EntityType.HOT_AIR_BALLOON,
+          price: 45,
+          claimed: false,
+          frameIndex: 0,
+        },
+      ],
+      entities,
+      setEntities
+    );
   }
 }
 
@@ -80,10 +92,6 @@ export default function Game() {
     coinsRef.current = marbles;
   }, [marbles]);
 
-  useEffect(() => {
-    console.log(entities);
-  }, [entities]);
-
   const entitiesToRender = entities.map((e, idx) => {
     return (
       <Entity
@@ -109,40 +117,46 @@ export default function Game() {
   });
 
   return (
-    <div
-      style={{
-        padding: "3rem 3rem 3rem 3rem",
-        display: "grid",
-        gridTemplateRows: "64px 50%",
-        gap: "10rem",
-      }}
-    >
+    <div>
+      <Dialog
+        title="Insufficient marbles"
+        description="You don't have enough marbles."
+      ></Dialog>
       <div
         style={{
+          padding: "3rem 3rem 3rem 3rem",
           display: "grid",
-          gridTemplateColumns: "256px 50%",
+          gridTemplateRows: "64px 50%",
+          gap: "10rem",
         }}
       >
-        <Coins
-          onMarblesCollect={() => {
-            setAccumulatedCoins(accumulatedCoins + coinsRef.current);
-            setMarbles(0);
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "256px 50%",
           }}
-          accumulatedMarbles={accumulatedCoins}
-          marbles={marbles}
-          rate={rate}
-        ></Coins>
-      </div>
+        >
+          <Coins
+            onMarblesCollect={() => {
+              setAccumulatedCoins(accumulatedCoins + coinsRef.current);
+              setMarbles(0);
+            }}
+            accumulatedMarbles={accumulatedCoins}
+            marbles={marbles}
+            rate={rate}
+          ></Coins>
+        </div>
 
-      <div
-        style={{
-          display: "grid",
-          justifyContent: "center",
-          gridTemplateColumns: "64px 64px 64px 64px 64px",
-          gap: "30px",
-        }}
-      >
-        {entitiesToRender}
+        <div
+          style={{
+            display: "grid",
+            justifyContent: "center",
+            gridTemplateColumns: "64px 64px 64px 64px 64px 64px 64px 64px",
+            gap: "30px",
+          }}
+        >
+          {entitiesToRender}
+        </div>
       </div>
     </div>
   );
