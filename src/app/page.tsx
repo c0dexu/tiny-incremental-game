@@ -2,12 +2,11 @@
 
 import Coins from "./components/coins.component";
 import { SetStateAction, useEffect, useRef, useState } from "react";
-import Generator from "./components/generator.component";
 import { v4 as uuidv4 } from "uuid";
 import { IEntity } from "./entity.interface";
-import Cat from "./components/cat.component";
-import { Rules } from "./enums/rules.enum";
 import { EntityType } from "./enums/entity-types.enum";
+import Entity from "./components/entity.component";
+import { entityFrames } from "./entities.list";
 
 function populatePlayground(
   entitiesToPopulate: IEntity[],
@@ -23,23 +22,21 @@ function updatePlayground(
   marbles: number,
   setEntities: (value: SetStateAction<IEntity[]>) => void
 ) {
-  if (entities.length === 1 && entities[0].type === "GENERATOR") {
-    if (entities[0].price === 0) {
-      populatePlayground(
-        [
-          {
-            type: EntityType.CAT,
-            price: 15,
-            claimed: false,
-            frameIndex: 0,
-          },
-        ],
-        entities,
-        setEntities
-      );
-    } else if (entities.length > 2) {
-      // soon
-    }
+  if (entities.length === 1) {
+    populatePlayground(
+      [
+        {
+          type: EntityType.CAT,
+          price: 15,
+          claimed: false,
+          frameIndex: 0,
+        },
+      ],
+      entities,
+      setEntities
+    );
+  } else if (entities.length > 1) {
+    // stuff
   }
 }
 
@@ -88,44 +85,27 @@ export default function Game() {
   }, [entities]);
 
   const entitiesToRender = entities.map((e, idx) => {
-    switch (e.type) {
-      case "GENERATOR":
-        return (
-          <Generator
-            key={idx}
-            frameIndex={frameIndex}
-            coins={accumulatedCoins}
-            claimed={e.claimed}
-            price={e.price}
-            power={e.power}
-            onClaim={(power, price) => {
-              setRate((r) => r + power);
-              setAccumulatedCoins((m) => Math.max(0, m - price));
-              setMarbles(0);
-              const tempList = [...entities];
-              tempList[idx].claimed = true;
-              setEntities([...tempList]);
-              updatePlayground(entities, marbles, setEntities);
-            }}
-          ></Generator>
-        );
-      case "CAT":
-        return (
-          <Cat
-            key={idx}
-            frameIndex={frameIndex}
-            coins={accumulatedCoins}
-            claimed={e.claimed}
-            price={e.price}
-            onClaim={(power, price) => {
-              const tempList = [...entities];
-              tempList[idx].claimed = true;
-              setEntities([...tempList]);
-              setAccumulatedCoins((m) => Math.max(0, m - e.price));
-            }}
-          ></Cat>
-        );
-    }
+    return (
+      <Entity
+        key={idx}
+        frames={entityFrames[e.type]}
+        name={e.type}
+        frameIndex={frameIndex}
+        coins={accumulatedCoins}
+        claimed={e.claimed}
+        price={e.price}
+        power={e.power}
+        onClaim={(power, price) => {
+          setRate((r) => r + power);
+          setAccumulatedCoins((m) => Math.max(0, m - price));
+          setMarbles(0);
+          const tempList = [...entities];
+          tempList[idx].claimed = true;
+          setEntities([...tempList]);
+          updatePlayground(entities, marbles, setEntities);
+        }}
+      ></Entity>
+    );
   });
 
   return (

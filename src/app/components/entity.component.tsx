@@ -1,6 +1,6 @@
 import { EntityProps } from "../entity.interface";
 
-export default function Generator(props: EntityProps) {
+export default function Entity(props: EntityProps) {
   return (
     <div
       style={{
@@ -26,14 +26,14 @@ export default function Generator(props: EntityProps) {
           }}
         >
           {!props.claimed && (
-            <img src="/generator.png" width="64px" height="64px"></img>
+            <img src={`/${props.frames[0]}`} width="64px" height="64px"></img>
           )}
 
           {props.claimed && props.frameIndex === 0 && (
-            <img src="/generator.png" width="64px" height="64px"></img>
+            <img src={`/${props.frames[0]}`} width="64px" height="64px"></img>
           )}
           {props.claimed && props.frameIndex === 1 && (
-            <img src="/generator_2.png" width="64px" height="64px"></img>
+            <img src={`/${props.frames[1]}`} width="64px" height="64px"></img>
           )}
         </div>
       </div>
@@ -42,8 +42,8 @@ export default function Generator(props: EntityProps) {
           textAlign: "center",
         }}
       >
-        <div>Generator</div>
-        <div>Power: {props.power ?? 0}</div>
+        <div>{props.name}</div>
+        {props.power && <div>Power: {props.power}</div>}
         {!props.claimed && <div>[{props.price} marbles]</div>}
       </div>
     </div>

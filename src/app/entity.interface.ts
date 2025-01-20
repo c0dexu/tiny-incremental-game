@@ -10,7 +10,9 @@ export interface IEntity {
 
 export interface EntityProps {
   key: number;
+  name: string;
   frameIndex: number;
+  frames: string[];
   coins: number;
   claimed: boolean;
   price: number;
