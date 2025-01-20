@@ -9,33 +9,37 @@ import Cat from "./components/cat.component";
 import { Rules } from "./enums/rules.enum";
 import { EntityType } from "./enums/entity-types.enum";
 
-function getRule(entities: IEntity[], marbles: number): Rules {
-  if (entities.length === 1 && entities[0].type === "GENERATOR") {
-    if (entities[0].price === 0) {
-      return Rules.first_time_play;
-    }
-  }
-  return Rules.nothing;
+function populatePlayground(
+  entitiesToPopulate: IEntity[],
+  entities: IEntity[],
+  setEntities: (value: SetStateAction<IEntity[]>) => void
+) {
+  const temp = [...entities];
+  setEntities([...temp, ...entitiesToPopulate]);
 }
 
-function checkRule(
+function updatePlayground(
   entities: IEntity[],
   marbles: number,
   setEntities: (value: SetStateAction<IEntity[]>) => void
 ) {
-  const rule = getRule(entities, marbles);
-  switch (rule) {
-    case Rules.first_time_play:
-      const xyz = [...entities];
-      xyz.push({
-        type: EntityType.GENERATOR,
-        price: 15,
-        claimed: false,
-        power: 0,
-        frameIndex: 0,
-      });
-      setEntities([...xyz]);
-      break;
+  if (entities.length === 1 && entities[0].type === "GENERATOR") {
+    if (entities[0].price === 0) {
+      populatePlayground(
+        [
+          {
+            type: EntityType.CAT,
+            price: 15,
+            claimed: false,
+            frameIndex: 0,
+          },
+        ],
+        entities,
+        setEntities
+      );
+    } else if (entities.length > 2) {
+      // soon
+    }
   }
 }
 
@@ -101,7 +105,7 @@ export default function Game() {
               const tempList = [...entities];
               tempList[idx].claimed = true;
               setEntities([...tempList]);
-              checkRule(entities, marbles, setEntities);
+              updatePlayground(entities, marbles, setEntities);
             }}
           ></Generator>
         );
@@ -114,7 +118,6 @@ export default function Game() {
             claimed={e.claimed}
             price={e.price}
             onClaim={(power, price) => {
-              console.log("here");
               const tempList = [...entities];
               tempList[idx].claimed = true;
               setEntities([...tempList]);
