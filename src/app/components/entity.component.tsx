@@ -19,9 +19,7 @@ export default function Entity(props: EntityProps) {
           }}
           onClick={() => {
             if (!props.claimed) {
-              if (props.coins >= props.price) {
-                props.onClaim(props.power ?? 0, props.price);
-              }
+              props.onClaim(props.power ?? 0, props.price);
             }
           }}
         >

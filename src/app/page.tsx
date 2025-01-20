@@ -60,6 +60,8 @@ export default function Game() {
   const coinsRef = useRef(0);
   const [entities, setEntities] = useState<IEntity[]>([]);
   const [frameIndex, setFrameIndex] = useState(0);
+  const [insufficientFundsDialog, setInsufficientFundsDialog] = useState(false);
+  const entityRef = useRef<IEntity | null>(null);
 
   // initial effect to add the zero generator
   useEffect(() => {
@@ -104,13 +106,18 @@ export default function Game() {
         price={e.price}
         power={e.power}
         onClaim={(power, price) => {
-          setRate((r) => r + power);
-          setAccumulatedCoins((m) => Math.max(0, m - price));
-          setMarbles(0);
-          const tempList = [...entities];
-          tempList[idx].claimed = true;
-          setEntities([...tempList]);
-          updatePlayground(entities, marbles, setEntities);
+          entityRef.current = e;
+          if (accumulatedCoins >= price) {
+            setRate((r) => r + power);
+            setAccumulatedCoins((m) => Math.max(0, m - price));
+            setMarbles(0);
+            const tempList = [...entities];
+            tempList[idx].claimed = true;
+            setEntities([...tempList]);
+            updatePlayground(entities, marbles, setEntities);
+          } else {
+            setInsufficientFundsDialog(true);
+          }
         }}
       ></Entity>
     );
@@ -118,10 +125,32 @@ export default function Game() {
 
   return (
     <div>
-      <Dialog
-        title="Insufficient marbles"
-        description="You don't have enough marbles."
-      ></Dialog>
+      {insufficientFundsDialog && (
+        <div
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+            }}
+          >
+            <Dialog
+              title="Insufficient marbles"
+              description={`You need ${entityRef.current?.price} marbles to buy ${entityRef.current?.type}`}
+              onSubmit={() => {
+                setInsufficientFundsDialog(false);
+              }}
+            ></Dialog>
+          </div>
+        </div>
+      )}
       <div
         style={{
           padding: "3rem 3rem 3rem 3rem",
