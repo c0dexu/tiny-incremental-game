@@ -4,7 +4,7 @@ export default function Entity(props: EntityProps) {
   return (
     <div
       style={{
-        width: "85px",
+        width: "64px",
       }}
     >
       <div
