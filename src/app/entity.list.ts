@@ -29,4 +29,9 @@ export const entityItems: Record<EntityType, EntityItem> = {
     spawnProbability: 0.2,
     price: 350,
   },
+  [EntityType.SNAIL]: {
+    frames: ["snail.png", "snail_2.png"],
+    spawnProbability: 1,
+    price: 10,
+  },
 };

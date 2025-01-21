@@ -3,6 +3,7 @@ export enum EntityType {
   CAT = "CAT",
   HOT_AIR_BALLOON = "HOT_AIR_BALLOON",
   STAR = "STAR",
+  SNAIL = "SNAIL",
   // GIANT_MARBLE = "GIANT_MARBLE",
   // FOX = "FOX",
   // DOG = "DOG",
